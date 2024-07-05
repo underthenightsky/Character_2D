@@ -1,118 +1,124 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import * as React from 'react';
+import { Button, StyleSheet, View } from 'react-native';
+import { Sprite, AnimatedSprite } from '@kaizer433/react-native-spritesheet';
+interface SpriteRef {
+  setCurrentFrameIndex: (frameIndex: number) => void;
+}
+interface AnimateSpriteRef {
+  startAnimation: (
+    animationName: string,
+    loop?: boolean,
+    customFrameRate?: number
+  ) => void;
+  getCurrentAnimationName: () => string;
+}
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+export default function App() {
+  const [active, setActive] = React.useState('ANIMATED');
+  const ref = React.useRef<SpriteRef>(null);
+  const animatedRef = React.useRef<AnimateSpriteRef>(null);
+const ninjaJson = require('./public/sprite/spritesheet_ninja.json');
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const skellyJson = require('./public/sprite/spritesheet_skelly.json');
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View>
+      <View style={styles.container}>
+        <Button onPress={() => setActive('ANIMATED')} title="Animated" />
+        <Button onPress={() => setActive('SPRITE')} title="Sprite" />
+      </View>
+      {active === 'ANIMATED' ? (
+        <View style={styles.screenContainer}>
+          <AnimatedSprite
+            ref={animatedRef}
+            source={require('./public/sprite/spritesheet_ninja.png')}
+            spriteSheetWidth={14670}
+            spriteSheetHeight={601}
+            width={524 * 0.5}
+            height={565 * 0.5}
+            frames={ninjaJson.frames}
+            defaultAnimationName="ATTACK"
+            animations={{
+              ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+              CLIMB: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+              DEAD: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+            }}
+            inLoop={false}
+            autoPlay={true}
+          />
+          <View style={styles.btnContainer}>
+            <Button
+              onPress={() =>
+                animatedRef.current?.startAnimation('ATTACK', false)
+              }
+              color={'white'}
+              title="ATTACK"
+            />
+            <Button
+              onPress={() => animatedRef.current?.startAnimation('CLIMB')}
+              title="CLIMB"
+              color={'white'}
+            />
+            <Button
+              onPress={() => animatedRef.current?.startAnimation('DEAD')}
+              title="DEAD"
+              color={'white'}
+            />
+            <Button
+              onPress={() =>
+                animatedRef.current?.startAnimation('RUN', true, 15)
+              }
+              title="RUN"
+              color={'white'}
+            />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.screenContainer}>
+          <Sprite
+            ref={ref}
+            source={require('./public/sprite/spritesheet_skelly.png')}
+            width={300}
+            height={300}
+            spriteSheetWidth={4420}
+            spriteSheetHeight={130}
+            frames={skellyJson.frames}
+          />
+          <Button
+            title="Show 1"
+            onPress={() => ref.current?.setCurrentFrameIndex(10)}
+          />
+          <Button
+            title="Show 2"
+            onPress={() => ref.current?.setCurrentFrameIndex(6)}
+          />
+          <Button
+            title="Show 3"
+            onPress={() => ref.current?.setCurrentFrameIndex(27)}
+          />
+          <Button
+            title="Show 4"
+            onPress={() => ref.current?.setCurrentFrameIndex(9)}
+          />
+        </View>
+      )}
     </View>
   );
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    // flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 30,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  screenContainer: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'gray',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  btnContainer: {
+    marginTop: 50,
   },
 });
-
-export default App;
