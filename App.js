@@ -49,11 +49,11 @@ export default class App extends React.Component {
               />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, marginRight: 10 }}>Loop</Text>
+              <Text style={{ fontSize: 16, marginRight: 10,color:'white' }}>Loop</Text>
               <Switch value={loop} onValueChange={loop => this.setState({ loop })} />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, marginRight: 10 }}>Reset After Finish</Text>
+              <Text style={{ fontSize: 16, marginRight: 10,color:'white' }}>Reset After Finish</Text>
               <Switch
                 value={resetAfterFinish}
                 onValueChange={val => this.setState({ resetAfterFinish: val })}
